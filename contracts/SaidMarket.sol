@@ -2,6 +2,7 @@
 pragma solidity ^0.8.27;
 
 import {ERC721URIStorage, ERC721} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
 struct NFT {
     address seller;
@@ -26,7 +27,7 @@ contract SaidMarket is ERC721URIStorage {
         uint256 price
     );
     constructor() ERC721("MyNFT", "ITM") {
-        // owner = msg.sender; // the owner is who deployed the contract
+        marketplaceOwner = payable(msg.sender); // the owner is who deployed the contract
     }
 
     modifier onlyOwner() {
@@ -48,7 +49,7 @@ contract SaidMarket is ERC721URIStorage {
     }
 
     // list nft to the market (said market :))
-    function listingNFt(uint256 tokenId, uint256 price) public {
+    function listingNFt(uint256 tokenId, uint256 price) public onlyOwner {
         // listing not requiring any fee
         require(price > 0, "SaidMarket : price must be greather than 0");
         // approve(address(this), tokenId); // allowing the market to handle this token
@@ -80,7 +81,7 @@ contract SaidMarket is ERC721URIStorage {
     // cancel listing of nft
     function cancelListing(uint256 tokenId) public {
         NFT memory nftToCancel = _arr_of_nfts[tokenId];
-        require(nftToCancel.price > 0, "SaidMarket : nft not listed for sele");
+        require(nftToCancel.price > 0, "SaidMarket : nft not listed for sale");
         require(
             nftToCancel.seller == msg.sender,
             "SaidMarket : only the owner can cancel the nft from listing"
