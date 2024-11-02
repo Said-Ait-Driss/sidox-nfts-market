@@ -6,7 +6,7 @@ async function main(){
     const NftMarket = await ethers.getContractFactory("SaidMarket");
     const nftmarket = await NftMarket.deploy();
     // await nftmarket.deployed();
-    // console.log("SaidMarket deployed to:", nftmarket.address);
+    console.log("SaidMarket deployed to:", await nftmarket.getAddress());
 }
 
 main().catch((error)=>{
