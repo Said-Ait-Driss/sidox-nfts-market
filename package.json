@@ -13,10 +13,14 @@
     "@heroicons/react": "^2.1.5",
     "@openzeppelin/contracts": "^5.1.0",
     "dotenv": "^16.4.5",
+    "formidable": "^3.5.2",
     "next": "14.2.16",
+    "nft.storage": "6.0.0",
     "react": "^18",
+    "react-blockies": "^1.4.1",
     "react-dom": "^18",
-    "save": "^2.9.0"
+    "save": "^2.9.0",
+    "web3modal": "^1.9.12"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.8",

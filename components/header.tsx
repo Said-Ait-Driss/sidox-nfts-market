@@ -13,45 +13,54 @@ import {
 } from "@headlessui/react";
 import {
   Bars3Icon,
-  ChartPieIcon,
   CursorArrowRaysIcon,
   FingerPrintIcon,
   SquaresPlusIcon,
   XMarkIcon,
-  ShoppingBagIcon
+  ShoppingBagIcon,
 } from "@heroicons/react/24/outline";
-import {
-  ChevronDownIcon,
-} from "@heroicons/react/20/solid";
-const nfts = [
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import Link from "next/link";
+import { useSigner } from "../state";
+import Blockies from "react-blockies";
+
+type NftLinkType = {
+  name: string;
+  description: string;
+  href: string;
+  icon: any;
+};
+
+const nfts: NftLinkType[] = [
   {
     name: "Market nfts",
     description: "descover available market nfts that are mined by others",
-    href: "#",
+    href: "/marketplace",
     icon: ShoppingBagIcon,
   },
   {
     name: "My listed nfts",
     description: "Explore my listed nfts in the market",
-    href: "#",
+    href: "/my_listed_nfts",
     icon: FingerPrintIcon,
   },
   {
     name: "My unlisted nfts",
     description: "See my unlisted nfts",
-    href: "#",
+    href: "my_unlisted_nfts",
     icon: CursorArrowRaysIcon,
   },
   {
     name: "Create & mint new nft",
     description: "Create new nft",
-    href: "#",
+    href: "/new_nft",
     icon: SquaresPlusIcon,
-  }
+  },
 ];
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { signer, address, loading, connectWallet } = useSigner();
 
   return (
     <header className="bg-white">
@@ -67,7 +76,9 @@ export default function Header() {
               src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
               className="h-8 w-auto"
             />
-            <span className="text-black text-md font-bold mx-2 mt-1">Sidox</span>
+            <span className="text-black text-md font-bold mx-2 mt-1">
+              Sidox
+            </span>
           </a>
         </div>
         <div className="flex lg:hidden">
@@ -95,29 +106,35 @@ export default function Header() {
               className="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5 transition data-[closed]:translate-y-1 data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in"
             >
               <div className="p-4">
-                {nfts.map((item) => (
-                  <div
-                    key={item.name}
-                    className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-gray-50"
-                  >
-                    <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                      <item.icon
-                        aria-hidden="true"
-                        className="h-6 w-6 text-gray-600 group-hover:text-indigo-600"
-                      />
-                    </div>
-                    <div className="flex-auto">
-                      <a
-                        href={item.href}
-                        className="block font-semibold text-gray-900"
+                {nfts.map(
+                  (item) =>
+                    (item.href == "/marketplace" || signer) && (
+                      <div
+                        key={item.name}
+                        className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-gray-50"
                       >
-                        {item.name}
-                        <span className="absolute inset-0" />
-                      </a>
-                      <p className="mt-1 text-gray-600">{item.description}</p>
-                    </div>
-                  </div>
-                ))}
+                        <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
+                          <item.icon
+                            aria-hidden="true"
+                            className="h-6 w-6 text-gray-600 group-hover:text-indigo-600"
+                          />
+                        </div>
+
+                        <div className="flex-auto">
+                          <Link
+                            href={item.href}
+                            className="block font-semibold text-gray-900"
+                          >
+                            {item.name}
+                            <span className="absolute inset-0" />
+                          </Link>
+                          <p className="mt-1 text-gray-600">
+                            {item.description}
+                          </p>
+                        </div>
+                      </div>
+                    )
+                )}
               </div>
             </PopoverPanel>
           </Popover>
@@ -133,9 +150,20 @@ export default function Header() {
           </a>
         </PopoverGroup>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <a href="#" className="text-sm/6 font-semibold text-gray-900">
-            Connect <span aria-hidden="true">&rarr;</span>
-          </a>
+          {address ? (
+            <div className="flex space-x-1 h-10 items-center">
+              <Blockies seed={address} className="rounded-md" />
+              <span> {address.slice(0, 15)} </span>
+            </div>
+          ) : (
+            <button
+              onClick={() => connectWallet()}
+              disabled={loading}
+              className="text-sm/6 font-semibold text-gray-900"
+            >
+              Connect <span aria-hidden="true">&rarr;</span>
+            </button>
+          )}
         </div>
       </nav>
       <Dialog
@@ -168,7 +196,7 @@ export default function Header() {
               <div className="space-y-2 py-6">
                 <Disclosure as="div" className="-mx-3">
                   <DisclosureButton className="group flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">
-                    Product
+                    Market
                     <ChevronDownIcon
                       aria-hidden="true"
                       className="h-5 w-5 flex-none group-data-[open]:rotate-180"
@@ -211,7 +239,7 @@ export default function Header() {
                   href="#"
                   className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                 >
-                  Log in
+                  Connect
                 </a>
               </div>
             </div>
