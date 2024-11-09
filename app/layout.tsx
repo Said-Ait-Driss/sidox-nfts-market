@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Header from "../components/header";
 import SignerProvider from "../providers/context.provider";
+import TheApolloProvider from "../providers/apollo.provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -31,8 +32,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <SignerProvider>
-          <Header />
-          {children}
+          <TheApolloProvider>
+            <Header />
+            {children}
+          </TheApolloProvider>
         </SignerProvider>
       </body>
     </html>

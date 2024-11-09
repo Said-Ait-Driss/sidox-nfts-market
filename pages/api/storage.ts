@@ -17,28 +17,29 @@ async function handler(req: any, res: any) {
       });
     });
     // Read image from /tmp
-    const {
-      filepath,
-      originalFilename = "image",
-      mimetype = "image",
-    } = data.image[0];
+    const { filepath } = data.image[0];
+
+    const json: any = JSON.stringify({
+      name: data.name[0],
+      description: data.description[0],
+    });
 
     const buffer = readFileSync(filepath);
     const arraybuffer = Uint8Array.from(buffer).buffer;
+
     const formData = new FormData();
     formData.append("file", new Blob([arraybuffer]), "image.png"); // Append the image file
-    formData.append("name", data.name[0]); // Append the NFT name
-    formData.append("description", data.description[0]);
+    formData.append("name", data.name[0]); // Append the image file
+    formData.append("keyvalues", json); // Append the NFT name
 
-    let metadata : any= await fetch("https://uploads.pinata.cloud/v3/files", {
+    let metadata: any = await fetch("https://uploads.pinata.cloud/v3/files", {
       method: "POST",
       headers: {
         Authorization: "Bearer " + process.env.PINATA_JWT,
       },
       body: formData,
     });
-      metadata = await metadata.json();
-
+    metadata = await metadata.json();
     res.status(201).json({ uri: metadata.data.cid });
 
     // Delete tmp image
